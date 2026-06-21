@@ -4,10 +4,10 @@ import json
 import os
 from datetime import datetime
 
-st.set_page_config(layout="wide", page_title="Petanque Elo-Rangliste", page_icon="🏆")
+# layout="wide" wurde entfernt, damit die App auf großen Monitoren schön zentriert bleibt
+st.set_page_config(page_title="Petanque Elo-Rangliste", page_icon="🏆")
 
 # --- DYNAMISCHER DATEN-SCHALTER ---
-# Erkennt automatisch, ob die App lokal auf deinem PC oder live im Internet läuft
 if st.config.get_option("server.headless"):
     DATEI_PFAD = "petanque_daten_PROD.json"  # Die echte Live-Datenbank im Netz
 else:
@@ -19,7 +19,6 @@ def lade_daten():
     if os.path.exists(DATEI_PFAD):
         with open(DATEI_PFAD, "r", encoding="utf-8") as f:
             daten = json.load(f)
-            # Sicherstellen, dass die Warteschlange in der JSON existiert
             if "warteschlange" not in daten:
                 daten["warteschlange"] = []
             return daten
@@ -42,14 +41,13 @@ if 'spiele_historie' not in st.session_state:
 if 'warteschlange' not in st.session_state:
     st.session_state.warteschlange = gespeicherte_daten["warteschlange"]
 
-st.title("🧮 Petanque Rangliste & Vereins-Elo 🏆")
+st.title("🏆 Petanque Vereins-Elo & Rangliste")
 
 # --- SEITENLEISTE: PROFIL-AUSWAHL & ADMIN ---
 with st.sidebar:
     st.image("ptnq_logo.svg", use_container_width=True)
     st.divider()
     
-    # Anzeige, in welchem Modus sich die App befindet
     if st.config.get_option("server.headless"):
         st.caption("🟢 Live-Modus (PROD)")
     else:
@@ -64,7 +62,7 @@ with st.sidebar:
     ist_admin = (pwd_eingabe == ADMIN_PASSWORT)
     
     if ist_admin:
-        st.success("🔓 Admin-Rechte aktiv!")
+        st.success("🔓 Admin-Rechte active!")
         st.header("👥 Spieler verwalten")
         neuer_spieler = st.text_input("Neuer Spieler Name:")
         if st.button("Spieler hinzufügen", use_container_width=True):
@@ -75,99 +73,12 @@ with st.sidebar:
                 st.success(f"{neuer_spieler} hinzugefügt!")
                 st.rerun()
 
-# --- HAUPTLAYOUT: ZWEI SPALTEN ---
-layout_links, layout_rechts = st.columns([2, 3])
+# --- HAUPTLAYOUT: REGISTERKARTEN (TABS) ---
+# Das sorgt für die perfekte mobile und Desktop-Ansicht!
+tab_tabelle, tab_eintragen, tab_offene = st.tabs(["📊 Rangliste", "🎯 Spiel eintragen", "⏳ Offene Bestätigungen"])
 
-# LINKE SEITE: EINGABEMASKE & WARTESCHLANGE
-with layout_links:
-    st.header("🎯 Spiel eintragen")
-    
-    if aktueller_user != "Gast / Zuschauer":
-        st.caption(f"Eingetragen von: **{aktueller_user}**")
-        with st.container(border=True):
-            spieltyp = st.selectbox(
-                "📍 Spieltyp / Wertung wählen",
-                ["🌳 Hobby / Park", "🏟️ Verein / Training", "🏆 Liga", "🥇 Turnier"]
-            )
-            
-            st.divider()
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.subheader("Team A (Dein Team)")
-                team_a = st.multiselect("Spieler Team A", st.session_state.spieler, default=[aktueller_user], key="ta")
-                punkte_a = st.number_input("Punkte Team A", min_value=0, max_value=13, value=0, step=1, key="pa")
-            with col2:
-                st.subheader("Team B (Gegner)")
-                verfuegbar_b = [s for s in st.session_state.spieler if s not in team_a]
-                team_b = st.multiselect("Spieler Team B", verfuegbar_b, key="tb")
-                punkte_b = st.number_input("Punkte Team B", min_value=0, max_value=13, value=0, step=1, key="pb")
-
-            if st.button("Spiel zur Bestätigung einsenden", type="primary", use_container_width=True):
-                if aktueller_user not in team_a:
-                    st.error("Du musst selbst in Team A mitspielen, um das Ergebnis einzutragen!")
-                elif not team_a or not team_b:
-                    st.error("Beide Teams müssen mindestens einen Spieler haben!")
-                elif punkte_a == punkte_b:
-                    st.error("Beim Petanque gibt es kein Unentschieden!")
-                else:
-                    jetzt = datetime.now().strftime("%d.%m.%Y %H:%M")
-                    
-                    st.session_state.warteschlange.append({
-                        "Zeitstempel": jetzt,
-                        "Spieltyp": spieltyp,
-                        "Team A": team_a, "Punkte A": punkte_a,
-                        "Team B": team_b, "Punkte B": punkte_b,
-                        "EingetragenVon": aktueller_user
-                    })
-                    speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                    st.success("Spiel eingereicht! Ein Spieler aus Team B muss es jetzt bestätigen.")
-                    st.rerun()
-    else:
-        st.info("ℹ️ Wähle in der linken Seitenleiste dein Profil aus, um ein Spiel einzutragen.")
-
-    # --- DIE BESTÄTIGUNGS-BOX ---
-    st.divider()
-    st.header("⏳ Offene Spielebestätigungen")
-    
-    offene_spiele = False
-    # Wir loopen rückwärts, damit das Löschen aus der Liste via pop() keine Index-Fehler wirft
-    for i in range(len(st.session_state.warteschlange) - 1, -1, -1):
-        spiel = st.session_state.warteschlange[i]
-        ta, tb = spiel["Team A"], spiel["Team B"]
-        pa, pb = spiel["Punkte A"], spiel["Punkte B"]
-        
-        user_ist_gegner = aktueller_user in tb
-        
-        with st.container(border=True):
-            st.write(f"**Typ:** {spiel['Spieltyp']} | 📅 {spiel['Zeitstempel']}")
-            st.write(f"🤝 **{', '.join(ta)}** ({pa} : {pb}) **{', '.join(tb)}**")
-            st.caption(f"Eingereicht von: {spiel['EingetragenVon']}")
-            
-            if user_ist_gegner or ist_admin:
-                col_ja, col_nein = st.columns(2)
-                with col_ja:
-                    if st.button("✅ Bestätigen", key=f"ja_{i}", use_container_width=True):
-                        st.session_state.spiele_historie.append(spiel)
-                        st.session_state.warteschlange.pop(i)
-                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                        st.success("Spiel bestätigt!")
-                        st.rerun()
-                with col_nein:
-                    if st.button("❌ Ablehnen / Löschen", key=f"nein_{i}", use_container_width=True):
-                        st.session_state.warteschlange.pop(i)
-                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                        st.warning("Spiel abgelehnt!")
-                        st.rerun()
-            else:
-                st.warning("🔒 Warte auf Bestätigung durch einen Spieler aus Team B.")
-            offene_spiele = True
-            
-    if not offene_spiele:
-        st.write("Keine offenen Spiele zur Bestätigung.")
-
-# RECHTE SEITE: INTERAKTIVE TABELLE
-with layout_rechts:
+# TAB 1: DIE RANGLISTE & TABELLE
+with tab_tabelle:
     st.header("📊 Die aktuelle Tabelle")
 
     rangliste = {s: {"Elo": 1000.0, "Spiele": 0, "Siege": 0, "Niederlagen": 0, "Differenz": 0} for s in st.session_state.spieler}
@@ -222,32 +133,119 @@ with layout_rechts:
         }
     )
 
-st.divider()
-
-# --- 3. HISTORIE ANZEIGEN ---
-if st.session_state.spiele_historie:
-    st.header("📄 Bestätigte Spiele-Historie")
+    st.divider()
     
-    if ist_admin:
-        with st.container(border=True):
-            st.subheader("❌ Einzelnes Spiel löschen (Admin)")
-            spiel_optionen = [(i, f"Spiel {i+1}: {', '.join(s['Team A'])} ({s['Punkte A']}:{s['Punkte B']}) {', '.join(s['Team B'])}") for i, s in enumerate(st.session_state.spiele_historie)]
-            ausgewaehltes_spiel = st.selectbox("Wähle das Spiel aus:", options=spiel_optionen, format_func=lambda x: x[1])
-            if st.button("❌ Spiel unwiderruflich löschen", use_container_width=True):
-                st.session_state.spiele_historie.pop(ausgewaehltes_spiel[0])
-                speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                st.success("Spiel gelöscht!")
-                st.rerun()
-
-    with st.expander("🔍 Alle bestätigten Spiele anzeigen"):
-        schoene_historie = [{"Nr.": i + 1, "Datum / Uhrzeit": s.get("Zeitstempel", "Unbekannt"), "Typ": s.get("Spieltyp", "🏟️ Verein / Training"), "Team A": ", ".join(s["Team A"]), "Ergebnis": f"{s['Punkte A']} : {s['Punkte B']}", "Team B": ", ".join(s["Team B"])} for i, s in enumerate(st.session_state.spiele_historie)]
-        st.table(schoene_historie)
+    # Historie wird unten im Tab angezeigt
+    if st.session_state.spiele_historie:
+        st.subheader("📄 Bestätigte Spiele-Historie")
         
-    if ist_admin:
-        with st.expander("⚠️ Gefahrenzone: Gesamtes Turnier löschen"):
-            if st.button("Gesamtes Turnier / Alle Daten löschen", type="primary", use_container_width=True):
-                if os.path.exists(DATEI_PFAD): os.remove(DATEI_PFAD)
-                st.session_state.spiele_historie = []
-                st.session_state.warteschlange = []
-                st.success("Alle Daten gelöscht!")
-                st.rerun()
+        if ist_admin:
+            with st.container(border=True):
+                st.caption("❌ Einzelnes Spiel löschen (Admin)")
+                spiel_optionen = [(i, f"Spiel {i+1}: {', '.join(s['Team A'])} ({s['Punkte A']}:{s['Punkte B']}) {', '.join(s['Team B'])}") for i, s in enumerate(st.session_state.spiele_historie)]
+                ausgewaehltes_spiel = st.selectbox("Wähle das Spiel aus:", options=spiel_optionen, format_func=lambda x: x[1])
+                if st.button("❌ Spiel unwiderruflich löschen", use_container_width=True):
+                    st.session_state.spiele_historie.pop(ausgewaehltes_spiel[0])
+                    speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    st.success("Spiel gelöscht!")
+                    st.rerun()
+
+        with st.expander("🔍 Alle bestätigten Spiele anzeigen"):
+            schoene_historie = [{"Nr.": i + 1, "Datum / Uhrzeit": s.get("Zeitstempel", "Unbekannt"), "Typ": s.get("Spieltyp", "🏟️ Verein / Training"), "Team A": ", ".join(s["Team A"]), "Ergebnis": f"{s['Punkte A']} : {s['Punkte B']}", "Team B": ", ".join(s["Team B"])} for i, s in enumerate(st.session_state.spiele_historie)]
+            st.table(schoene_historie)
+            
+        if ist_admin:
+            with st.expander("⚠️ Gefahrenzone: Gesamtes Turnier löschen"):
+                if st.button("Gesamtes Turnier / Alle Daten löschen", type="primary", use_container_width=True):
+                    if os.path.exists(DATEI_PFAD): os.remove(DATEI_PFAD)
+                    st.session_state.spiele_historie = []
+                    st.session_state.warteschlange = []
+                    st.success("Alle Daten gelöscht!")
+                    st.rerun()
+
+# TAB 2: SPIEL EINTRAGEN
+with tab_eintragen:
+    st.header("🎯 Spiel eintragen")
+    
+    if aktueller_user != "Gast / Zuschauer":
+        st.caption(f"Eingetragen von: **{aktueller_user}**")
+        with st.container(border=True):
+            spieltyp = st.selectbox(
+                "📍 Spieltyp / Wertung wählen",
+                ["🌳 Hobby / Park", "🏟️ Verein / Training", "🏆 Liga", "🥇 Turnier"]
+            )
+            
+            st.divider()
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Team A (Dein Team)")
+                team_a = st.multiselect("Spieler Team A", st.session_state.spieler, default=[aktueller_user], key="ta")
+                punkte_a = st.number_input("Punkte Team A", min_value=0, max_value=13, value=0, step=1, key="pa")
+            with col2:
+                st.subheader("Team B (Gegner)")
+                verfuegbar_b = [s for s in st.session_state.spieler if s not in team_a]
+                team_b = st.multiselect("Spieler Team B", verfuegbar_b, key="tb")
+                punkte_b = st.number_input("Punkte Team B", min_value=0, max_value=13, value=0, step=1, key="pb")
+
+            if st.button("Spiel zur Bestätigung einsenden", type="primary", use_container_width=True):
+                if aktueller_user not in team_a:
+                    st.error("Du musst selbst in Team A mitspielen, um das Ergebnis einzutragen!")
+                elif not team_a or not team_b:
+                    st.error("Beide Teams müssen mindestens einen Spieler haben!")
+                elif punkte_a == punkte_b:
+                    st.error("Beim Petanque gibt es kein Unentschieden!")
+                else:
+                    jetzt = datetime.now().strftime("%d.%m.%Y %H:%M")
+                    
+                    st.session_state.warteschlange.append({
+                        "Zeitstempel": jetzt,
+                        "Spieltyp": spieltyp,
+                        "Team A": team_a, "Punkte A": punkte_a,
+                        "Team B": team_b, "Punkte B": punkte_b,
+                        "EingetragenVon": aktueller_user
+                    })
+                    speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    st.success("Spiel eingereicht! Ein Spieler aus Team B muss es jetzt bestätigen.")
+                    st.rerun()
+    else:
+        st.info("ℹ️ Wähle in der linken Seitenleiste dein Profil aus, um ein Spiel einzutragen.")
+
+# TAB 3: OFFENE BESTÄTIGUNGEN
+with tab_offene:
+    st.header("⏳ Offene Spielebestätigungen")
+    
+    offene_spiele = False
+    for i in range(len(st.session_state.warteschlange) - 1, -1, -1):
+        spiel = st.session_state.warteschlange[i]
+        ta, tb = spiel["Team A"], spiel["Team B"]
+        pa, pb = spiel["Punkte A"], spiel["Punkte B"]
+        
+        user_ist_gegner = aktueller_user in tb
+        
+        with st.container(border=True):
+            st.write(f"**Typ:** {spiel['Spieltyp']} | 📅 {spiel['Zeitstempel']}")
+            st.write(f"🤝 **{', '.join(ta)}** ({pa} : {pb}) **{', '.join(tb)}**")
+            st.caption(f"Eingereicht von: {spiel['EingetragenVon']}")
+            
+            if user_ist_gegner or ist_admin:
+                col_ja, col_nein = st.columns(2)
+                with col_ja:
+                    if st.button("✅ Bestätigen", key=f"ja_{i}", use_container_width=True):
+                        st.session_state.spiele_historie.append(spiel)
+                        st.session_state.warteschlange.pop(i)
+                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        st.success("Spiel bestätigt!")
+                        st.rerun()
+                with col_nein:
+                    if st.button("❌ Ablehnen / Löschen", key=f"nein_{i}", use_container_width=True):
+                        st.session_state.warteschlange.pop(i)
+                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        st.warning("Spiel abgelehnt!")
+                        st.rerun()
+            else:
+                st.warning("🔒 Warte auf Bestätigung durch einen Spieler aus Team B.")
+            offene_spiele = True
+            
+    if not offene_spiele:
+        st.write("Keine offenen Spiele zur Bestätigung.")
