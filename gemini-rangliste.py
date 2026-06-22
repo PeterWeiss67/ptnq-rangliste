@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime
 
-# layout="wide" wurde entfernt, damit die App auf großen Monitoren schön zentriert bleibt
+# Die App bleibt für große Monitore zentriert
 st.set_page_config(page_title="Petanque Elo-Rangliste", page_icon="🏆")
 
 # --- DYNAMISCHER DATEN-SCHALTER ---
@@ -41,13 +41,10 @@ if 'spiele_historie' not in st.session_state:
 if 'warteschlange' not in st.session_state:
     st.session_state.warteschlange = gespeicherte_daten["warteschlange"]
 
-st.title("🏆 Petanque Vereins-Elo & Rangliste")
 
 # --- SEITENLEISTE: PROFIL-AUSWAHL & ADMIN ---
 with st.sidebar:
-    st.image("ptnq_logo.svg", use_container_width=True)
-    st.divider()
-    
+    # Das Logo wurde hier entfernt, da es jetzt groß auf der Hauptseite steht
     if st.config.get_option("server.headless"):
         st.caption("🟢 Live-Modus (PROD)")
     else:
@@ -62,7 +59,7 @@ with st.sidebar:
     ist_admin = (pwd_eingabe == ADMIN_PASSWORT)
     
     if ist_admin:
-        st.success("🔓 Admin-Rechte active!")
+        st.success("🔓 Admin-Rechte aktiv!")
         st.header("👥 Spieler verwalten")
         neuer_spieler = st.text_input("Neuer Spieler Name:")
         if st.button("Spieler hinzufügen", use_container_width=True):
@@ -73,13 +70,24 @@ with st.sidebar:
                 st.success(f"{neuer_spieler} hinzugefügt!")
                 st.rerun()
 
-# --- HAUPTLAYOUT: REGISTERKARTEN (TABS) ---
-# Das sorgt für die perfekte mobile und Desktop-Ansicht!
+
+# ==========================================
+# 1. LOGO GANZ OBEN AUF DER HAUPTSEITE
+# ==========================================
+st.image("ptnq_logo.svg", use_container_width=True)
+st.write("") 
+
+# ==========================================
+# 2. HIER DIE TABS GENAU EINMAL DEFINIEREN
+# ==========================================
 tab_tabelle, tab_eintragen, tab_offene = st.tabs(["📊 Rangliste", "🎯 Spiel eintragen", "⏳ Offene Bestätigungen"])
 
-# TAB 1: DIE RANGLISTE & TABELLE
+
+# ==========================================
+# 3. TAB 1: DIE RANGLISTE
+# ==========================================
 with tab_tabelle:
-    st.header("📊 Die aktuelle Tabelle")
+    st.header("Rangliste")
 
     rangliste = {s: {"Elo": 1000.0, "Spiele": 0, "Siege": 0, "Niederlagen": 0, "Differenz": 0} for s in st.session_state.spieler}
 
@@ -135,7 +143,6 @@ with tab_tabelle:
 
     st.divider()
     
-    # Historie wird unten im Tab angezeigt
     if st.session_state.spiele_historie:
         st.subheader("📄 Bestätigte Spiele-Historie")
         
@@ -163,7 +170,10 @@ with tab_tabelle:
                     st.success("Alle Daten gelöscht!")
                     st.rerun()
 
-# TAB 2: SPIEL EINTRAGEN
+
+# ==========================================
+# 4. TAB 2: SPIEL EINTRAGEN
+# ==========================================
 with tab_eintragen:
     st.header("🎯 Spiel eintragen")
     
@@ -172,7 +182,8 @@ with tab_eintragen:
         with st.container(border=True):
             spieltyp = st.selectbox(
                 "📍 Spieltyp / Wertung wählen",
-                ["🌳 Hobby / Park", "🏟️ Verein / Training", "🏆 Liga", "🥇 Turnier"]
+                ["🌳 Hobby / Park", "🏟️ Verein / Training", "🏆 Liga", "🥇 Turnier"],
+                key="spieltyp_auswahl"
             )
             
             st.divider()
@@ -211,7 +222,10 @@ with tab_eintragen:
     else:
         st.info("ℹ️ Wähle in der linken Seitenleiste dein Profil aus, um ein Spiel einzutragen.")
 
-# TAB 3: OFFENE BESTÄTIGUNGEN
+
+# ==========================================
+# 5. TAB 3: OFFENE BESTÄTIGUNGEN
+# ==========================================
 with tab_offene:
     st.header("⏳ Offene Spielebestätigungen")
     
@@ -235,7 +249,7 @@ with tab_offene:
                         st.session_state.spiele_historie.append(spiel)
                         st.session_state.warteschlange.pop(i)
                         speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                        st.success("Spiel bestätigt!")
+                        st.success("Spiel confirmed!")
                         st.rerun()
                 with col_nein:
                     if st.button("❌ Ablehnen / Löschen", key=f"nein_{i}", use_container_width=True):
