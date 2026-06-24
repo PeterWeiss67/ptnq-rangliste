@@ -161,7 +161,9 @@ with st.sidebar:
                     st.session_state.dashboard_spieler = n_name
                 speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
                 st.success("Erfolgreich geändert!")
-                st.rerun()
+                st.rerust.divider()
+    st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
+    st.caption("PTNQ™ ist eine eingetragene Marke. Die Vervielfältigung des Codes, Designs oder der Inhalte ist ohne ausdrückliche Genehmigung untersagt.")n()
 
 
 # ==========================================
