@@ -4,7 +4,6 @@ import json
 import os
 from datetime import datetime
 
-# Die App bleibt für große Monitore zentriert
 st.set_page_config(page_title="Petanque Elo-Rangliste", page_icon="🏆")
 
 # --- DYNAMISCHER DATEN-SCHALTER ---
@@ -21,7 +20,6 @@ START_PLATZHALTER_PIN = "PROFIL_SPERRE_INIT_2026"
 
 # --- HILFSFUNKTION: NAMEN KÜRZEN ---
 def kuerze_name(voller_name):
-    """Macht aus 'Max Mustermann' -> 'Max M.' und lässt 'Ali' -> 'Ali'"""
     teile = voller_name.strip().split()
     if len(teile) > 1:
         return f"{teile[0]} {teile[-1][0]}."
@@ -31,7 +29,6 @@ def lade_daten():
     if os.path.exists(DATEI_PFAD):
         with open(DATEI_PFAD, "r", encoding="utf-8") as f:
             daten = json.load(f)
-            # Automatische Konvertierung von alter Listen-Struktur zu sicherer PIN-Struktur
             if isinstance(daten.get("spieler"), list):
                 daten["spieler"] = {s: {"pin": START_PLATZHALTER_PIN} for s in daten["spieler"]}
             if "warteschlange" not in daten:
@@ -63,7 +60,6 @@ if 'aktueller_reiter' not in st.session_state:
 if 'dashboard_spieler' not in st.session_state:
     st.session_state.dashboard_spieler = None
 
-# Hilfsliste für Sortierungen und Dropdowns
 liste_aller_spieler_namen = sorted(list(st.session_state.spieler_dict.keys()))
 
 
@@ -96,21 +92,18 @@ with st.sidebar:
             if not sauberer_name:
                 st.error("Bitte gib deinen Namen ein!")
             elif len(reg_pin) != 4 or not reg_pin.isdigit():
-                st.error("Der PIN must aus genau 4 Zahlen bestehen!")
+                st.error("Der PIN muss aus genau 4 Zahlen bestehen!")
             else:
-                # Prüfen, ob der Spieler schon existiert (z.B. aus deinen 32 Altdaten)
                 if sauberer_name in st.session_state.spieler_dict:
                     aktueller_status_pin = st.session_state.spieler_dict[sauberer_name].get("pin")
-                    # Wenn er noch gesperrt ist, darf der User ihn mit seiner Wunsch-PIN aktivieren
                     if aktueller_status_pin == START_PLATZHALTER_PIN:
                         st.session_state.spieler_dict[sauberer_name]["pin"] = reg_pin
                         speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                        st.success(f"🎉 Profil von '{kuerze_name(sauberer_name)}' erfolgreich mit neuem PIN aktiviert!")
+                        st.success(f"🎉 Profil von '{kuerze_name(sauberer_name)}' erfolgreich aktiviert!")
                         st.rerun()
                     else:
-                        st.error("Dieser Name ist bereits aktiv vergeben und durch einen PIN geschützt!")
+                        st.error("Dieser Name ist bereits aktiv vergeben!")
                 else:
-                    # Komplett neuer Spieler von auswärts
                     st.session_state.spieler_dict[sauberer_name] = {"pin": reg_pin}
                     speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
                     st.success(f"🎉 Willkommen, {kuerze_name(sauberer_name)}! Du wurdest neu registriert.")
@@ -123,7 +116,7 @@ with st.sidebar:
         korrekter_pin = st.session_state.spieler_dict[gewaehlter_user].get("pin", START_PLATZHALTER_PIN)
         
         if korrekter_pin == START_PLATZHALTER_PIN and user_pin != MASTER_PIN:
-            st.warning("🔒 Dieses Profil wurde noch nicht aktiviert. Bitte nutze oben die Option 'Registrieren' mit exakt deinem Namen, um deinen PIN festzulegen!")
+            st.warning("🔒 Profil nicht aktiviert. Bitte nutze oben 'Registrieren' mit exakt deinem Namen, um deinen PIN festzulegen!")
         elif user_pin == korrekter_pin or user_pin == MASTER_PIN:
             user_eingeloggt = True
             aktueller_user = gewaehlter_user
@@ -179,19 +172,14 @@ st.write("")
 
 
 # ==========================================
-# INTERNE BERECHNUNG DER RANGLISTE
+# INTERNE BERECHNUNG DER RANGLISTE (K=24 KONSTANT)
 # ==========================================
 rangliste = {s: {"Elo": 1000.0, "Spiele": 0, "Siege": 0, "Niederlagen": 0, "Differenz": 0, "Form": []} for s in liste_aller_spieler_namen}
+K_FAKTOR = 24  # Standard Elo-Gewichtung für alle Spiele
 
 for spiel in st.session_state.spiele_historie:
     ta, tb = spiel["Team A"], spiel["Team B"]
     pa, pb = spiel["Punkte A"], spiel["Punkte B"]
-    typ = spiel.get("Spieltyp", "🏟️ Verein / Training")
-    
-    if "Hobby" in typ: k_faktor = 12
-    elif "Liga" in typ: k_faktor = 36
-    elif "Turnier" in typ: k_faktor = 48
-    else: k_faktor = 24
     
     elo_team_a = sum(rangliste[s]["Elo"] for s in ta if s in rangliste) / max(len(ta), 1)
     elo_team_b = sum(rangliste[s]["Elo"] for s in tb if s in rangliste) / max(len(tb), 1)
@@ -199,8 +187,8 @@ for spiel in st.session_state.spiele_historie:
     erwartung_b = 1 - erwartung_a
     ergebnis_a = 1.0 if pa > pb else 0.0
     ergebnis_b = 1.0 - ergebnis_a
-    aenderung_a = k_faktor * (ergebnis_a - erwartung_a)
-    aenderung_b = k_faktor * (ergebnis_b - erwartung_b)
+    aenderung_a = K_FAKTOR * (ergebnis_a - erwartung_a)
+    aenderung_b = K_FAKTOR * (ergebnis_b - erwartung_b)
     
     for s in ta:
         if s in rangliste:
@@ -281,11 +269,11 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
         st.subheader("📄 Bestätigte Spiele-Historie")
         with st.expander("🔍 Alle bestätigten Spiele anzeigen"):
             schoene_historie = [{
-                "Nr.": i + 1, 
-                "Typ": s.get("Spieltyp", "🏟️ Training"), 
+                "Spiel-Nr.": i + 1, 
                 "Team A": ", ".join([kuerze_name(x) for x in s["Team A"]]), 
                 "Ergebnis": f"{s['Punkte A']} : {s['Punkte B']}", 
-                "Team B": ", ".join([kuerze_name(x) for x in s["Team B"]])
+                "Team B": ", ".join([kuerze_name(x) for x in s["Team B"]]),
+                "Datum/Zeit": s.get("Zeitstempel", "-")
             } for i, s in enumerate(st.session_state.spiele_historie)]
             st.table(schoene_historie)
 
@@ -311,7 +299,6 @@ elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
     st.session_state.dashboard_spieler = ausgewaehlter_spieler
     
     if ausgewaehlter_spieler:
-        # PIN-Änderungsbereich (Sichtbar für den User selbst oder Admins)
         if aktueller_user == ausgewaehlter_spieler or ist_admin:
             with st.expander("🔑 Meinen 4-stelligen PIN ändern"):
                 neuer_pin_eingabe = st.text_input("Neuer PIN (4 Zahlen):", type="password", max_chars=4)
@@ -359,14 +346,6 @@ elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
     if user_eingeloggt:
         st.caption(f"Eingetragen von: **{kuerze_name(aktueller_user)}**")
         with st.container(border=True):
-            spieltyp = st.selectbox(
-                "📍 Spieltyp / Wertung wählen",
-                ["🌳 Hobby / Park", "🏟️ Verein / Training", "🏆 Liga", "🥇 Turnier"],
-                key="spieltyp_auswahl"
-            )
-            
-            st.divider()
-            
             col1, col2 = st.columns(2)
             with col1:
                 st.subheader("Team A (Dein Team)")
@@ -390,7 +369,6 @@ elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
                     
                     st.session_state.warteschlange.append({
                         "Zeitstempel": jetzt,
-                        "Spieltyp": spieltyp,
                         "Team A": team_a, "Punkte A": punkte_a,
                         "Team B": team_b, "Punkte B": punkte_b,
                         "EingetragenVon": aktueller_user
@@ -415,7 +393,7 @@ elif st.session_state.aktueller_reiter == "⏳ Offene Bestätigungen":
         user_ist_gegner = aktueller_user in tb
         
         with st.container(border=True):
-            st.write(f"**Typ:** {spiel['Spieltyp']} | 📅 {spiel['Zeitstempel']}")
+            st.write(f"📅 {spiel['Zeitstempel']}")
             st.write(f"🤝 **{', '.join([kuerze_name(x) for x in ta])}** ({pa} : {pb}) **{', '.join([kuerze_name(x) for x in tb])}**")
             st.caption(f"Eingereicht von: {kuerze_name(spiel['EingetragenVon'])}")
             
