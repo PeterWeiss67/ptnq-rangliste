@@ -234,10 +234,20 @@ st.session_state.aktueller_reiter = ausgewaehlter_reiter
 # REITER-LOGIK
 # ==========================================
 
-# --- REITER 1: RANGLISTE ---
+    # --- REITER 1: RANGLISTE ---
 if st.session_state.aktueller_reiter == "📊 Rangliste":
     st.header("Rangliste")
-    st.caption("💡 Tippe einfach auf eine Zeile, um direkt zu den Spieler-Details zu springen.")
+    
+    with st.expander("ℹ️ Wie funktioniert die Rangliste? (Hier klicken)"):
+        st.markdown("""
+        Willkommen bei unserer Petanque-Rangliste! Um die Platzierungen absolut fair zu gestalten, nutzen wir das **Elo-System**.
+        * **Startwert:** Jeder startet mit **1000 Punkten**.
+        * **Starke Gegner belohnen mehr:** Ein Sieg gegen ein höher platziertes Team bringt dir deutlich mehr Punkte als ein Sieg gegen Anfänger.
+        * **Kaum Risiko gegen Profis:** Verlierst du gegen ein Top-Team, verlierst du nur minimal Punkte.
+        * **Teamwertung:** Bei Doublette/Triplette zählt der Durchschnitt des Teams, die Punkte bekommt nach dem Match aber jeder Spieler voll.
+        """)
+        
+    st.caption("💡 Tippe einfach auf das Kästchen vor dem Spieler, um direkt zu den Spieler-Details zu springen.")
 
     auswahl_event = st.dataframe(
         df[["Platz", "Spieler", "Elo", "Spiele", "Differenz"]],
