@@ -49,7 +49,7 @@ if 'spiele_historie' not in st.session_state:
 if 'warteschlange' not in st.session_state:
     st.session_state.warteschlange = gespeicherte_daten["warteschlange"]
 
-if 'aktiver_tab' not in st.session_state:
+if 'aktueller_reiter' not in st.session_state:
     st.session_state.aktueller_reiter = "📊 Rangliste"
 if 'dashboard_spieler' not in st.session_state:
     st.session_state.dashboard_spieler = None
@@ -77,7 +77,7 @@ with st.sidebar:
     ist_admin = (pwd_eingabe == ADMIN_PASSWORT)
     
     if ist_admin:
-        st.success("🔓 Admin-Rechte aktiv!")
+        st.success("🔓 Admin-Rechte active!")
         
         st.subheader("👥 Spieler hinzufügen")
         neuer_spieler = st.text_input("Voller Name (z.B. Max Mustermann):")
@@ -176,7 +176,6 @@ df = df.sort_values(by=["Elo", "Differenz"], ascending=[False, False])
 df.index.name = "VollerName"
 df = df.reset_index()
 
-# NEU: Wir fügen eine extra Spalte für die Anzeige hinzu!
 df["Spieler"] = df["VollerName"].apply(kuerze_name)
 df.insert(0, "Platz", range(1, len(df) + 1))
 
@@ -204,7 +203,7 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
     st.caption("💡 Tippe einfach auf eine Zeile, um direkt zu den Spieler-Details zu springen.")
 
     auswahl_event = st.dataframe(
-        df[["Platz", "Spieler", "Elo", "Differenz"]], # Zeigt nur den gekürzten Namen an!
+        df[["Platz", "Spieler", "Elo", "Differenz"]],
         use_container_width=True, 
         hide_index=True,
         on_select="rerun",
@@ -221,7 +220,6 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
         selected_rows = auswahl_event["selection"]["rows"]
         if selected_rows:
             gewaehlter_index = selected_rows[0]
-            # Holt im Hintergrund den echten vollen Namen für die Logik
             geklickter_spieler = df.iloc[gewaehlter_index]["VollerName"]
             st.session_state.dashboard_spieler = geklickter_spieler
             st.session_state.aktueller_reiter = "👤 Spieler-Details"
@@ -257,7 +255,7 @@ elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
         "Wähle einen Spieler für Details aus:", 
         st.session_state.spieler, 
         index=default_index,
-        format_func=kuerze_name, # Zeigt im Dropdown nur die Kurzform
+        format_func=kuerze_name,
         key="dashboard_auswahl_box"
     )
     st.session_state.dashboard_spieler = ausgewaehlter_spieler
@@ -286,3 +284,95 @@ elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
             letzte_5 = alle_form_eintraege[-5:]
             letzte_5.reverse()
             st.subheader("   ".join(letzte_5))
+        else:
+            st.info("Noch keine Spiele absolviert.")
+
+
+# --- REITER 3: SPIEL EINTRAGEN ---
+elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
+    st.header("🎯 Spiel eintragen")
+    
+    if aktueller_user != "Gast / Zuschauer":
+        st.caption(f"Eingetragen von: **{kuerze_name(aktueller_user)}**")
+        with st.container(border=True):
+            spieltyp = st.selectbox(
+                "📍 Spieltyp / Wertung wählen",
+                ["🌳 Hobby / Park", "🏟️ Verein / Training", "🏆 Liga", "🥇 Turnier"],
+                key="spieltyp_auswahl"
+            )
+            
+            st.divider()
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Team A (Dein Team)")
+                team_a = st.multiselect("Spieler Team A", st.session_state.spieler, default=[aktueller_user], format_func=kuerze_name, key="ta")
+                punkte_a = st.number_input("Punkte Team A", min_value=0, max_value=13, value=0, step=1, key="pa")
+            with col2:
+                st.subheader("Team B (Gegner)")
+                verfuegbar_b = [s for s in st.session_state.spieler if s not in team_a]
+                team_b = st.multiselect("Spieler Team B", verfuegbar_b, format_func=kuerze_name, key="tb")
+                punkte_b = st.number_input("Punkte Team B", min_value=0, max_value=13, value=0, step=1, key="pb")
+
+            if st.button("Spiel zur Bestätigung einsenden", type="primary", use_container_width=True):
+                if aktueller_user not in team_a:
+                    st.error("Du musst selbst in Team A mitspielen, um das Ergebnis einzutragen!")
+                elif not team_a or not team_b:
+                    st.error("Beide Teams müssen mindestens einen Spieler haben!")
+                elif punkte_a == punkte_b:
+                    st.error("Beim Petanque gibt es kein Unentschieden!")
+                else:
+                    jetzt = datetime.now().strftime("%d.%m.%Y %H:%M")
+                    
+                    st.session_state.warteschlange.append({
+                        "Zeitstempel": jetzt,
+                        "Spieltyp": spieltyp,
+                        "Team A": team_a, "Punkte A": punkte_a,
+                        "Team B": team_b, "Punkte B": punkte_b,
+                        "EingetragenVon": aktueller_user
+                    })
+                    speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    st.success("Spiel eingereicht! Ein Spieler aus Team B muss es jetzt bestätigen.")
+                    st.rerun()
+    else:
+        st.info("ℹ️ Wähle in der linken Seitenleiste dein Profil aus, um ein Spiel einzutragen.")
+
+
+# --- REITER 4: OFFENE BESTÄTIGUNGEN ---
+elif st.session_state.aktueller_reiter == "⏳ Offene Bestätigungen":
+    st.header("⏳ Offene Spielebestätigungen")
+    
+    offene_spiele = False
+    for i in range(len(st.session_state.warteschlange) - 1, -1, -1):
+        spiel = st.session_state.warteschlange[i]
+        ta, tb = spiel["Team A"], spiel["Team B"]
+        pa, pb = spiel["Punkte A"], spiel["Punkte B"]
+        
+        user_ist_gegner = aktueller_user in tb
+        
+        with st.container(border=True):
+            st.write(f"**Typ:** {spiel['Spieltyp']} | 📅 {spiel['Zeitstempel']}")
+            st.write(f"🤝 **{', '.join([kuerze_name(x) for x in ta])}** ({pa} : {pb}) **{', '.join([kuerze_name(x) for x in tb])}**")
+            st.caption(f"Eingereicht von: {kuerze_name(spiel['EingetragenVon'])}")
+            
+            if user_ist_gegner or ist_admin:
+                col_ja, col_nein = st.columns(2)
+                with col_ja:
+                    if st.button("✅ Bestätigen", key=f"ja_{i}", use_container_width=True):
+                        st.session_state.spiele_historie.append(spiel)
+                        st.session_state.warteschlange.pop(i)
+                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        st.success("Spiel bestätigt!")
+                        st.rerun()
+                with col_nein:
+                    if st.button("❌ Ablehnen / Löschen", key=f"nein_{i}", use_container_width=True):
+                        st.session_state.warteschlange.pop(i)
+                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        st.warning("Spiel abgelehnt!")
+                        st.rerun()
+            else:
+                st.warning("🔒 Warte auf Bestätigung durch einen Spieler aus Team B.")
+            offene_spiele = True
+            
+    if not offene_spiele:
+        st.write("Keine offenen Spiele zur Bestätigung.")
