@@ -282,6 +282,37 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
 elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
     st.header("👤 Spieler-Statistiken")
     
+    # 1. PIN-ÄNDERUNG (Streng geschützt: Nur für das EIGENE, aktuell eingeloggte Profil)
+    if user_eingeloggt:
+        with st.expander(f"🔑 Mein Sicherheits-PIN ({kuerze_name(aktueller_user)}) ändern"):
+            neuer_pin_eingabe = st.text_input("Neuer 4-stelliger PIN (nur Zahlen):", type="password", max_chars=4, key="pwd_user_change")
+            if st.button("Meinen PIN dauerhaft speichern", use_container_width=True, key="btn_user_change"):
+                if len(neuer_pin_eingabe) == 4 and neuer_pin_eingabe.isdigit():
+                    st.session_state.spieler_dict[aktueller_user]["pin"] = neuer_pin_eingabe
+                    speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    st.success("🔒 Dein PIN wurde erfolgreich geändert und geschützt!")
+                    st.rerun()
+                else:
+                    st.error("Der PIN muss aus genau 4 ZIFFERN bestehen!")
+
+    # 2. ADMIN REFRESH-FUNKTION (Falls jemand seinen PIN vergessen hat)
+    if ist_admin:
+        st.write("")
+        with st.expander("🛠️ Admin-Werkzeug: Spieler-PIN zurücksetzen"):
+            pin_vergessen_spieler = st.selectbox("Für welchen Spieler PIN überschreiben?", liste_aller_spieler_namen, format_func=kuerze_name, key="admin_pin_reset_select")
+            admin_neuer_pin = st.text_input("Neuer Notfall-PIN (4 Zahlen):", type="password", max_chars=4, key="admin_pin_reset_input")
+            if st.button("PIN als Admin überschreiben", use_container_width=True, type="secondary"):
+                if len(admin_neuer_pin) == 4 and admin_neuer_pin.isdigit():
+                    st.session_state.spieler_dict[pin_vergessen_spieler]["pin"] = admin_neuer_pin
+                    speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    st.success(f"Der PIN für {kuerze_name(pin_vergessen_spieler)} wurde vom Admin geändert!")
+                    st.rerun()
+                else:
+                    st.error("Muss aus genau 4 Ziffern bestehen!")
+
+    st.divider()
+
+    # 3. STATISTIKEN-ANZEIGE (Völlig unabhängig vom Login für jeden einsehbar)
     if st.session_state.dashboard_spieler in liste_aller_spieler_namen:
         default_index = liste_aller_spieler_namen.index(st.session_state.dashboard_spieler)
     elif aktueller_user in liste_aller_spieler_namen:
@@ -299,19 +330,6 @@ elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
     st.session_state.dashboard_spieler = ausgewaehlter_spieler
     
     if ausgewaehlter_spieler:
-        if aktueller_user == ausgewaehlter_spieler or ist_admin:
-            with st.expander("🔑 Meinen 4-stelligen PIN ändern"):
-                neuer_pin_eingabe = st.text_input("Neuer PIN (4 Zahlen):", type="password", max_chars=4)
-                if st.button("PIN dauerhaft speichern", use_container_width=True):
-                    if len(neuer_pin_eingabe) == 4 and neuer_pin_eingabe.isdigit():
-                        st.session_state.spieler_dict[ausgewaehlter_spieler]["pin"] = neuer_pin_eingabe
-                        speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                        st.success("🔒 PIN erfolgreich geändert! Bitte merke ihn dir gut.")
-                    else:
-                        st.error("Der PIN muss aus genau 4 ZIFFERN bestehen!")
-
-        st.divider()
-        
         spieler_daten = df[df["VollerName"] == ausgewaehlter_spieler].iloc[0]
         siege, spiele = spieler_daten["Siege"], spieler_daten["Spiele"]
         quote = (siege / spiele * 100) if spiele > 0 else 0.0
