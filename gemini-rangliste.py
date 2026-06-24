@@ -202,8 +202,9 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
     st.header("Rangliste")
     st.caption("💡 Tippe einfach auf eine Zeile, um direkt zu den Spieler-Details zu springen.")
 
+    # Wir haben "Spiele" in die Liste der angezeigten Spalten aufgenommen
     auswahl_event = st.dataframe(
-        df[["Platz", "Spieler", "Elo", "Differenz"]],
+        df[["Platz", "Spieler", "Elo", "Spiele", "Differenz"]],
         use_container_width=True, 
         hide_index=True,
         on_select="rerun",
@@ -212,6 +213,7 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
             "Platz": st.column_config.NumberColumn("🏆 Platz", format="%d"),
             "Spieler": st.column_config.TextColumn("👤 Spieler"),
             "Elo": st.column_config.NumberColumn("Elo-Punkte", format="%.1f 🔥"),
+            "Spiele": st.column_config.NumberColumn("⚔️ Spiele", format="%d"), # NEU hinzugefügt
             "Differenz": st.column_config.NumberColumn("± Kugeln")
         }
     )
