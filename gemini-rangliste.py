@@ -361,22 +361,27 @@ elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
 elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
     st.header("🎯 Spiel eintragen")
     
-    if user_eingeloggt:
-        st.caption(f"Eingetragen von: **{kuerze_name(aktueller_user)}**")
+    # NEU: Erlaubt das Eintragen, wenn man als Spieler eingeloggt ODER Admin ist
+    if user_eingeloggt or ist_admin:
+        eintrager_name = aktueller_user if user_eingeloggt else "Admin (Zettel-Eingabe)"
+        st.caption(f"Eingetragen von: **{kuerze_name(eintrager_name)}**")
+        
         with st.container(border=True):
             col1, col2 = st.columns(2)
             with col1:
-                st.subheader("Team A (Dein Team)")
-                team_a = st.multiselect("Spieler Team A", liste_aller_spieler_namen, default=[aktueller_user], format_func=kuerze_name, key="ta")
+                st.subheader("Team A")
+                # Wenn der Admin einträgt, gibt es keinen automatischen Vorauswahl-Spieler
+                default_team_a = [aktueller_user] if (user_eingeloggt and aktueller_user in liste_aller_spieler_namen) else []
+                team_a = st.multiselect("Spieler Team A", liste_aller_spieler_namen, default=default_team_a, format_func=kuerze_name, key="ta")
                 punkte_a = st.number_input("Punkte Team A", min_value=0, max_value=13, value=0, step=1, key="pa")
             with col2:
-                st.subheader("Team B (Gegner)")
+                st.subheader("Team B")
                 verfuegbar_b = [s for s in liste_aller_spieler_namen if s not in team_a]
                 team_b = st.multiselect("Spieler Team B", verfuegbar_b, format_func=kuerze_name, key="tb")
                 punkte_b = st.number_input("Punkte Team B", min_value=0, max_value=13, value=0, step=1, key="pb")
 
             if st.button("Spiel zur Bestätigung einsenden", type="primary", use_container_width=True):
-                if aktueller_user not in team_a:
+                if not ist_admin and aktueller_user not in team_a:
                     st.error("Du musst selbst in Team A mitspielen, um das Ergebnis einzutragen!")
                 elif not team_a or not team_b:
                     st.error("Beide Teams müssen mindestens einen Spieler haben!")
@@ -389,14 +394,17 @@ elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
                         "Zeitstempel": jetzt,
                         "Team A": team_a, "Punkte A": punkte_a,
                         "Team B": team_b, "Punkte B": punkte_b,
-                        "EingetragenVon": aktueller_user
+                        "EingetragenVon": "Admin" if ist_admin else aktueller_user
                     })
                     speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                    st.success("Spiel eingereicht! Ein Spieler aus Team B muss es jetzt bestätigen.")
+                    
+                    if ist_admin:
+                        st.success("Spiel eingereicht! Geh jetzt zum Reiter 'Offene Bestätigungen', um es direkt freizugeben.")
+                    else:
+                        st.success("Spiel eingereicht! Ein Spieler aus Team B muss es jetzt bestätigen.")
                     st.rerun()
     else:
-        st.info("ℹ️ Bitte logge dich zuerst in der linken Seitenleiste mit deinem Namen und PIN ein, um ein Spiel einzutragen.")
-
+        st.info("ℹ️ Bitte logge dich zuerst in der linken Seitenleiste mit deinem Namen und PIN ein (oder nutze das Admin-Passwort), um ein Spiel einzutragen.")
 
 # --- REITER 4: OFFENE BESTÄTIGUNGEN ---
 elif st.session_state.aktueller_reiter == "⏳ Offene Bestätigungen":
