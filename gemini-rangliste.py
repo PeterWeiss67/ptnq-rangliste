@@ -14,6 +14,10 @@ else:
     DATEI_PFAD = "petanque_daten_TEST.json"
 
 ADMIN_PASSWORT = "petanque2026"
+MASTER_PIN = "3011"  # 👈 RECHTE-SCHLÜSSEL: Ändere diese 4 Zahlen in deinen geheimen Admin-PIN!
+
+# Sicherer Platzhalter, damit niemand ungefragt in alte Profile eindringen kann
+START_PLATZHALTER_PIN = "PROFIL_SPERRE_INIT_2026"
 
 # --- HILFSFUNKTION: NAMEN KÜRZEN ---
 def kuerze_name(voller_name):
@@ -27,10 +31,17 @@ def lade_daten():
     if os.path.exists(DATEI_PFAD):
         with open(DATEI_PFAD, "r", encoding="utf-8") as f:
             daten = json.load(f)
+            # Automatische Konvertierung von alter Listen-Struktur zu sicherer PIN-Struktur
+            if isinstance(daten.get("spieler"), list):
+                daten["spieler"] = {s: {"pin": START_PLATZHALTER_PIN} for s in daten["spieler"]}
             if "warteschlange" not in daten:
                 daten["warteschlange"] = []
             return daten
-    return {"spieler": ["Ali", "Beatrix Name", "Charly Müller"], "spiele_historie": [], "warteschlange": []}
+    return {
+        "spieler": {},
+        "spiele_historie": [],
+        "warteschlange": []
+    }
 
 def speichere_daten(daten):
     with open(DATEI_PFAD, "w", encoding="utf-8") as f:
@@ -38,10 +49,8 @@ def speichere_daten(daten):
 
 gespeicherte_daten = lade_daten()
 
-if 'spieler' not in st.session_state:
-    sortierte_spieler = gespeicherte_daten["spieler"]
-    sortierte_spieler.sort()
-    st.session_state.spieler = sortierte_spieler
+if 'spieler_dict' not in st.session_state:
+    st.session_state.spieler_dict = gespeicherte_daten["spieler"]
 
 if 'spiele_historie' not in st.session_state:
     st.session_state.spiele_historie = gespeicherte_daten["spiele_historie"]
@@ -54,72 +63,112 @@ if 'aktueller_reiter' not in st.session_state:
 if 'dashboard_spieler' not in st.session_state:
     st.session_state.dashboard_spieler = None
 
+# Hilfsliste für Sortierungen und Dropdowns
+liste_aller_spieler_namen = sorted(list(st.session_state.spieler_dict.keys()))
 
-# --- SEITENLEISTE ---
+
+# --- SEITENLEISTE (LOGIN, REGISTRIERUNG & ADMIN) ---
 with st.sidebar:
     if st.config.get_option("server.headless"):
         st.caption("🟢 Live-Modus (PROD)")
     else:
         st.caption("🟡 Test-Modus (LOCAL)")
         
-    st.header("👤 Mein Profil")
-    # In der Auswahl zeigen wir die Kurznamen, merken uns aber den vollen Namen!
-    spieler_mappen = {kuerze_name(s): s for s in st.session_state.spieler}
+    st.header("👤 Login")
+    spieler_mappen = {kuerze_name(s): s for s in liste_aller_spieler_namen}
     gast_option = "Gast / Zuschauer"
-    auswahl_optionen = [gast_option] + list(spieler_mappen.keys())
+    reg_option = "🆕 Neuer Spieler? Registrieren"
+    auswahl_optionen = [gast_option, reg_option] + list(spieler_mappen.keys())
     
     user_kurz = st.selectbox("Wer bist du?", auswahl_optionen)
-    aktueller_user = spieler_mappen.get(user_kurz, gast_option)
     
+    user_eingeloggt = False
+    aktueller_user = "Gast / Zuschauer"
+    
+    # --- FALL 1: SELBST-REGISTRIERUNG / AKTIVIERUNG ---
+    if user_kurz == reg_option:
+        st.subheader("📝 Profil erstellen / aktivieren")
+        reg_name = st.text_input("Dein voller Name (z.B. Max Mustermann):", key="reg_name_input")
+        reg_pin = st.text_input("Wähle einen 4-stelligen PIN (Nur Zahlen):", type="password", max_chars=4, key="reg_pin_input")
+        
+        if st.button("Konto aktivieren & Einloggen", type="primary", use_container_width=True):
+            sauberer_name = reg_name.strip()
+            if not sauberer_name:
+                st.error("Bitte gib deinen Namen ein!")
+            elif len(reg_pin) != 4 or not reg_pin.isdigit():
+                st.error("Der PIN must aus genau 4 Zahlen bestehen!")
+            else:
+                # Prüfen, ob der Spieler schon existiert (z.B. aus deinen 32 Altdaten)
+                if sauberer_name in st.session_state.spieler_dict:
+                    aktueller_status_pin = st.session_state.spieler_dict[sauberer_name].get("pin")
+                    # Wenn er noch gesperrt ist, darf der User ihn mit seiner Wunsch-PIN aktivieren
+                    if aktueller_status_pin == START_PLATZHALTER_PIN:
+                        st.session_state.spieler_dict[sauberer_name]["pin"] = reg_pin
+                        speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        st.success(f"🎉 Profil von '{kuerze_name(sauberer_name)}' erfolgreich mit neuem PIN aktiviert!")
+                        st.rerun()
+                    else:
+                        st.error("Dieser Name ist bereits aktiv vergeben und durch einen PIN geschützt!")
+                else:
+                    # Komplett neuer Spieler von auswärts
+                    st.session_state.spieler_dict[sauberer_name] = {"pin": reg_pin}
+                    speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    st.success(f"🎉 Willkommen, {kuerze_name(sauberer_name)}! Du wurdest neu registriert.")
+                    st.rerun()
+
+    # --- FALL 2: NORMALER LOGIN ---
+    elif user_kurz != gast_option:
+        gewaehlter_user = spieler_mappen[user_kurz]
+        user_pin = st.text_input("Dein 4-stelliger PIN:", type="password", key="user_pin_input")
+        korrekter_pin = st.session_state.spieler_dict[gewaehlter_user].get("pin", START_PLATZHALTER_PIN)
+        
+        if korrekter_pin == START_PLATZHALTER_PIN and user_pin != MASTER_PIN:
+            st.warning("🔒 Dieses Profil wurde noch nicht aktiviert. Bitte nutze oben die Option 'Registrieren' mit exakt deinem Namen, um deinen PIN festzulegen!")
+        elif user_pin == korrekter_pin or user_pin == MASTER_PIN:
+            user_eingeloggt = True
+            aktueller_user = gewaehlter_user
+            st.success(f"🔓 Eingeloggt als {kuerze_name(aktueller_user)}")
+        elif user_pin != "":
+            st.error("❌ Falscher PIN!")
+            
     st.divider()
     st.header("🔒 Admin-Bereich")
     pwd_eingabe = st.text_input("Passwort für Admin-Rechte:", type="password")
     ist_admin = (pwd_eingabe == ADMIN_PASSWORT)
     
     if ist_admin:
-        st.success("🔓 Admin-Rechte active!")
+        st.success("🔓 Admin-Rechte aktiv!")
         
-        st.subheader("👥 Spieler hinzufügen")
-        neuer_spieler = st.text_input("Voller Name (z.B. Max Mustermann):")
+        st.subheader("👥 Spieler manuell hinzufügen")
+        neuer_spieler = st.text_input("Voller Name:")
         if st.button("Spieler hinzufügen", use_container_width=True):
             spieler_name = neuer_spieler.strip()
-            if spieler_name:
-                if spieler_name not in st.session_state.spieler:
-                    st.session_state.spieler.append(spieler_name)
-                    st.session_state.spieler.sort()
-                    speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                    st.success(f"{kuerze_name(spieler_name)} hinzugefügt!")
-                    st.rerun()
+            if spieler_name and spieler_name not in st.session_state.spieler_dict:
+                st.session_state.spieler_dict[spieler_name] = {"pin": START_PLATZHALTER_PIN}
+                speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                st.success(f"{kuerze_name(spieler_name)} hinzugefügt! (Wartet auf Aktivierung)")
+                st.rerun()
                     
         st.subheader("📝 Spieler umbenennen")
-        spieler_zu_aendern = st.selectbox("Welchen Namen ändern?", st.session_state.spieler, format_func=kuerze_name)
+        spieler_zu_aendern = st.selectbox("Welchen Namen ändern?", liste_aller_spieler_namen, format_func=kuerze_name)
         neuer_name = st.text_input("Neuer voller Name:")
         if st.button("Namen systemweit ändern", use_container_width=True):
             n_name = neuer_name.strip()
-            if n_name and n_name != spieler_zu_aendern:
-                if n_name in st.session_state.spieler:
-                    st.error("Dieser Name existiert bereits!")
-                else:
-                    idx = st.session_state.spieler.index(spieler_zu_aendern)
-                    st.session_state.spieler[idx] = n_name
-                    st.session_state.spieler.sort()
-                    
-                    for spiel in st.session_state.spiele_historie:
-                        spiel["Team A"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team A"]]
-                        spiel["Team B"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team B"]]
-                        if spiel.get("EingetragenVon") == spieler_zu_aendern: spiel["EingetragenVon"] = n_name
-                            
-                    for spiel in st.session_state.warteschlange:
-                        spiel["Team A"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team A"]]
-                        spiel["Team B"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team B"]]
-                        if spiel.get("EingetragenVon") == spieler_zu_aendern: spiel["EingetragenVon"] = n_name
-                    
-                    if st.session_state.get("dashboard_spieler") == spieler_zu_aendern:
-                        st.session_state.dashboard_spieler = n_name
-                        
-                    speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
-                    st.success("Erfolgreich geändert!")
-                    st.rerun()
+            if n_name and n_name != spieler_zu_aendern and n_name not in st.session_state.spieler_dict:
+                st.session_state.spieler_dict[n_name] = st.session_state.spieler_dict.pop(spieler_zu_aendern)
+                for spiel in st.session_state.spiele_historie:
+                    spiel["Team A"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team A"]]
+                    spiel["Team B"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team B"]]
+                    if spiel.get("EingetragenVon") == spieler_zu_aendern: spiel["EingetragenVon"] = n_name
+                for spiel in st.session_state.warteschlange:
+                    spiel["Team A"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team A"]]
+                    spiel["Team B"] = [n_name if s == spieler_zu_aendern else s for s in spiel["Team B"]]
+                    if spiel.get("EingetragenVon") == spieler_zu_aendern: spiel["EingetragenVon"] = n_name
+                if st.session_state.get("dashboard_spieler") == spieler_zu_aendern:
+                    st.session_state.dashboard_spieler = n_name
+                speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                st.success("Erfolgreich geändert!")
+                st.rerun()
 
 
 # ==========================================
@@ -132,7 +181,7 @@ st.write("")
 # ==========================================
 # INTERNE BERECHNUNG DER RANGLISTE
 # ==========================================
-rangliste = {s: {"Elo": 1000.0, "Spiele": 0, "Siege": 0, "Niederlagen": 0, "Differenz": 0, "Form": []} for s in st.session_state.spieler}
+rangliste = {s: {"Elo": 1000.0, "Spiele": 0, "Siege": 0, "Niederlagen": 0, "Differenz": 0, "Form": []} for s in liste_aller_spieler_namen}
 
 for spiel in st.session_state.spiele_historie:
     ta, tb = spiel["Team A"], spiel["Team B"]
@@ -144,8 +193,8 @@ for spiel in st.session_state.spiele_historie:
     elif "Turnier" in typ: k_faktor = 48
     else: k_faktor = 24
     
-    elo_team_a = sum(rangliste[s]["Elo"] for s in ta if s in rangliste) / len(ta)
-    elo_team_b = sum(rangliste[s]["Elo"] for s in tb if s in rangliste) / len(tb)
+    elo_team_a = sum(rangliste[s]["Elo"] for s in ta if s in rangliste) / max(len(ta), 1)
+    elo_team_b = sum(rangliste[s]["Elo"] for s in tb if s in rangliste) / max(len(tb), 1)
     erwartung_a = 1 / (1 + 10 ** ((elo_team_b - elo_team_a) / 400))
     erwartung_b = 1 - erwartung_a
     ergebnis_a = 1.0 if pa > pb else 0.0
@@ -202,7 +251,6 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
     st.header("Rangliste")
     st.caption("💡 Tippe einfach auf eine Zeile, um direkt zu den Spieler-Details zu springen.")
 
-    # Wir haben "Spiele" in die Liste der angezeigten Spalten aufgenommen
     auswahl_event = st.dataframe(
         df[["Platz", "Spieler", "Elo", "Spiele", "Differenz"]],
         use_container_width=True, 
@@ -213,7 +261,7 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
             "Platz": st.column_config.NumberColumn("🏆 Platz", format="%d"),
             "Spieler": st.column_config.TextColumn("👤 Spieler"),
             "Elo": st.column_config.NumberColumn("Elo-Punkte", format="%.1f 🔥"),
-            "Spiele": st.column_config.NumberColumn("⚔️ Spiele", format="%d"), # NEU hinzugefügt
+            "Spiele": st.column_config.NumberColumn("⚔️ Spiele", format="%d"),
             "Differenz": st.column_config.NumberColumn("± Kugeln")
         }
     )
@@ -246,16 +294,16 @@ if st.session_state.aktueller_reiter == "📊 Rangliste":
 elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
     st.header("👤 Spieler-Statistiken")
     
-    if st.session_state.dashboard_spieler in st.session_state.spieler:
-        default_index = st.session_state.spieler.index(st.session_state.dashboard_spieler)
-    elif aktueller_user in st.session_state.spieler:
-        default_index = st.session_state.spieler.index(aktueller_user)
+    if st.session_state.dashboard_spieler in liste_aller_spieler_namen:
+        default_index = liste_aller_spieler_namen.index(st.session_state.dashboard_spieler)
+    elif aktueller_user in liste_aller_spieler_namen:
+        default_index = liste_aller_spieler_namen.index(aktueller_user)
     else:
         default_index = 0
         
     ausgewaehlter_spieler = st.selectbox(
         "Wähle einen Spieler für Details aus:", 
-        st.session_state.spieler, 
+        liste_aller_spieler_namen, 
         index=default_index,
         format_func=kuerze_name,
         key="dashboard_auswahl_box"
@@ -263,6 +311,20 @@ elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
     st.session_state.dashboard_spieler = ausgewaehlter_spieler
     
     if ausgewaehlter_spieler:
+        # PIN-Änderungsbereich (Sichtbar für den User selbst oder Admins)
+        if aktueller_user == ausgewaehlter_spieler or ist_admin:
+            with st.expander("🔑 Meinen 4-stelligen PIN ändern"):
+                neuer_pin_eingabe = st.text_input("Neuer PIN (4 Zahlen):", type="password", max_chars=4)
+                if st.button("PIN dauerhaft speichern", use_container_width=True):
+                    if len(neuer_pin_eingabe) == 4 and neuer_pin_eingabe.isdigit():
+                        st.session_state.spieler_dict[ausgewaehlter_spieler]["pin"] = neuer_pin_eingabe
+                        speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        st.success("🔒 PIN erfolgreich geändert! Bitte merke ihn dir gut.")
+                    else:
+                        st.error("Der PIN muss aus genau 4 ZIFFERN bestehen!")
+
+        st.divider()
+        
         spieler_daten = df[df["VollerName"] == ausgewaehlter_spieler].iloc[0]
         siege, spiele = spieler_daten["Siege"], spieler_daten["Spiele"]
         quote = (siege / spiele * 100) if spiele > 0 else 0.0
@@ -294,7 +356,7 @@ elif st.session_state.aktueller_reiter == "👤 Spieler-Details":
 elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
     st.header("🎯 Spiel eintragen")
     
-    if aktueller_user != "Gast / Zuschauer":
+    if user_eingeloggt:
         st.caption(f"Eingetragen von: **{kuerze_name(aktueller_user)}**")
         with st.container(border=True):
             spieltyp = st.selectbox(
@@ -308,11 +370,11 @@ elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
             col1, col2 = st.columns(2)
             with col1:
                 st.subheader("Team A (Dein Team)")
-                team_a = st.multiselect("Spieler Team A", st.session_state.spieler, default=[aktueller_user], format_func=kuerze_name, key="ta")
+                team_a = st.multiselect("Spieler Team A", liste_aller_spieler_namen, default=[aktueller_user], format_func=kuerze_name, key="ta")
                 punkte_a = st.number_input("Punkte Team A", min_value=0, max_value=13, value=0, step=1, key="pa")
             with col2:
                 st.subheader("Team B (Gegner)")
-                verfuegbar_b = [s for s in st.session_state.spieler if s not in team_a]
+                verfuegbar_b = [s for s in liste_aller_spieler_namen if s not in team_a]
                 team_b = st.multiselect("Spieler Team B", verfuegbar_b, format_func=kuerze_name, key="tb")
                 punkte_b = st.number_input("Punkte Team B", min_value=0, max_value=13, value=0, step=1, key="pb")
 
@@ -333,11 +395,11 @@ elif st.session_state.aktueller_reiter == "🎯 Spiel eintragen":
                         "Team B": team_b, "Punkte B": punkte_b,
                         "EingetragenVon": aktueller_user
                     })
-                    speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
                     st.success("Spiel eingereicht! Ein Spieler aus Team B muss es jetzt bestätigen.")
                     st.rerun()
     else:
-        st.info("ℹ️ Wähle in der linken Seitenleiste dein Profil aus, um ein Spiel einzutragen.")
+        st.info("ℹ️ Bitte logge dich zuerst in der linken Seitenleiste mit deinem Namen und PIN ein, um ein Spiel einzutragen.")
 
 
 # --- REITER 4: OFFENE BESTÄTIGUNGEN ---
@@ -363,13 +425,13 @@ elif st.session_state.aktueller_reiter == "⏳ Offene Bestätigungen":
                     if st.button("✅ Bestätigen", key=f"ja_{i}", use_container_width=True):
                         st.session_state.spiele_historie.append(spiel)
                         st.session_state.warteschlange.pop(i)
-                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
                         st.success("Spiel bestätigt!")
                         st.rerun()
                 with col_nein:
                     if st.button("❌ Ablehnen / Löschen", key=f"nein_{i}", use_container_width=True):
                         st.session_state.warteschlange.pop(i)
-                        speichere_daten({"spieler": st.session_state.spieler, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                        speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
                         st.warning("Spiel abgelehnt!")
                         st.rerun()
             else:
