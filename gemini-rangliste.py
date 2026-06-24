@@ -163,7 +163,7 @@ with st.sidebar:
                 st.success("Erfolgreich geändert!")
                 st.rerust.divider()
     st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
-    st.caption("PTNQ™ ist eine eingetragene Marke. Die Vervielfältigung des Codes, Designs oder der Inhalte ist ohne ausdrückliche Genehmigung untersagt.")n()
+    st.caption("PTNQ™ ist eine eingetragene Marke. Die Vervielfältigung des Codes, Designs oder der Inhalte ist ohne ausdrückliche Genehmigung untersagt.")
 
 
 # ==========================================
