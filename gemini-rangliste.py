@@ -238,9 +238,9 @@ st.session_state.aktueller_reiter = ausgewaehlter_reiter
 if st.session_state.aktueller_reiter == "📊 Rangliste":
     st.header("Rangliste")
     
-    with st.expander("ℹ️ Wie funktioniert die Rangliste? (Hier klicken)"):
+    with st.expander("ℹ️ Wie funktioniert die PTNQ-Rangliste? (Hier klicken)"):
         st.markdown("""
-        Willkommen bei unserer Petanque-Rangliste! Um die Platzierungen absolut fair zu gestalten, nutzen wir das **Elo-System**.
+        Willkommen bei unserer PTNQ-Rangliste! Um die Platzierungen absolut fair zu gestalten, nutzen wir das **Elo-System**.
         * **Startwert:** Jeder startet mit **1000 Punkten**.
         * **Starke Gegner belohnen mehr:** Ein Sieg gegen ein höher platziertes Team bringt dir deutlich mehr Punkte als ein Sieg gegen Anfänger.
         * **Kaum Risiko gegen Profis:** Verlierst du gegen ein Top-Team, verlierst du nur minimal Punkte.
