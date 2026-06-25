@@ -62,23 +62,34 @@ with st.sidebar:
     st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
     st.caption("PTNQ™ ist eine eingetragene Marke.")
 
-# --- NEU: Logo als Text einlesen und direkt in HTML einbetten ---
+# --- Logo als Text einlesen, skalieren und ohne HTML-Fehler anzeigen ---
 try:
     with open("ptnq_logo.svg", "r", encoding="utf-8") as f:
         svg_inhalt = f.read()
     
-    # Wir packen das SVG direkt in den Link-Anker
+    # Wir umschließen das SVG mit einem Skalierungs-Container und dem Link
     st.markdown(
         f"""
-        <a href="./" target="_self" style="display: block; width: 100%;">
-            {svg_inhalt}
-        </a>
+        <div style="width: 100%; text-align: center;">
+            <a href="./" target="_self" style="display: block; width: 100%; text-decoration: none;">
+                <div style="width: 100%; max-width: 100%; height: auto;">
+                    {svg_inhalt}
+                </div>
+            </a>
+        </div>
+        <style>
+            /* Dieser kleine CSS-Trick sorgt dafür, dass das SVG sich an seinen Container anpasst */
+            div > svg {{
+                width: 100% !important;
+                height: auto !important;
+            }}
+        </style>
         """,
         unsafe_allow_html=True
     )
 except Exception:
-    # Sicherheits-Fallback, falls beim Einlesen der Datei mal was schiefgeht
-    st.markdown('<a href="./" target="_self" style="font-weight:bold; text-align:center; display:block;">🎯 Zur Startseite</a>', unsafe_allow_html=True)
+    # Sicherheits-Fallback
+    st.markdown('<a href="./" target="_self" style="font-weight:bold; text-align:center; display:block; text-decoration:none;">🎯 Zur Startseite</a>', unsafe_allow_html=True)
 
 # Berechnung holen
 df, rangliste = dm.berechne_rangliste(st.session_state.spiele_historie, dm.liste_aller_spieler_namen)
