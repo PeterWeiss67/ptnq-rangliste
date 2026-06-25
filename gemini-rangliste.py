@@ -62,17 +62,23 @@ with st.sidebar:
     st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
     st.caption("PTNQ™ ist eine eingetragene Marke.")
 
-# --- NEU: Logo als klickbarer Link zur Startseite (ohne Login-Verlust) ---
-# Wir nutzen ein HTML-Anker-Tag <a>, das ein Bild <img> umschließt.
-# Der Link verweist auf das aktuelle Fenster/die aktuelle App-URL
-st.markdown(
-    """
-    <a href="./" target="_self">
-        <img src="app/static/ptnq_logo.svg" style="width: 100%; max-width: 100%; display: block; margin: auto;">
-    </a>
-    """,
-    unsafe_allow_html=True
-)
+# --- NEU: Logo als Text einlesen und direkt in HTML einbetten ---
+try:
+    with open("ptnq_logo.svg", "r", encoding="utf-8") as f:
+        svg_inhalt = f.read()
+    
+    # Wir packen das SVG direkt in den Link-Anker
+    st.markdown(
+        f"""
+        <a href="./" target="_self" style="display: block; width: 100%;">
+            {svg_inhalt}
+        </a>
+        """,
+        unsafe_allow_html=True
+    )
+except Exception:
+    # Sicherheits-Fallback, falls beim Einlesen der Datei mal was schiefgeht
+    st.markdown('<a href="./" target="_self" style="font-weight:bold; text-align:center; display:block;">🎯 Zur Startseite</a>', unsafe_allow_html=True)
 
 # Berechnung holen
 df, rangliste = dm.berechne_rangliste(st.session_state.spiele_historie, dm.liste_aller_spieler_namen)
