@@ -62,7 +62,17 @@ with st.sidebar:
     st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
     st.caption("PTNQ™ ist eine eingetragene Marke.")
 
-st.image("ptnq_logo.svg", use_container_width=True)
+# --- NEU: Logo als klickbarer Link zur Startseite (ohne Login-Verlust) ---
+# Wir nutzen ein HTML-Anker-Tag <a>, das ein Bild <img> umschließt.
+# Der Link verweist auf das aktuelle Fenster/die aktuelle App-URL
+st.markdown(
+    """
+    <a href="./" target="_self">
+        <img src="app/static/ptnq_logo.svg" style="width: 100%; max-width: 100%; display: block; margin: auto;">
+    </a>
+    """,
+    unsafe_allow_html=True
+)
 
 # Berechnung holen
 df, rangliste = dm.berechne_rangliste(st.session_state.spiele_historie, dm.liste_aller_spieler_namen)
