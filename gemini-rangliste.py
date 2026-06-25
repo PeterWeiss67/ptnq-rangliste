@@ -68,6 +68,11 @@ try:
         svg_inhalt = f.read()
     
     # Wir umschließen das SVG mit einem Skalierungs-Container und dem Link
+   # --- JETZT ABER: F-String-Klammern für CSS maskiert ---
+try:
+    with open("ptnq_logo.svg", "r", encoding="utf-8") as f:
+        svg_inhalt = f.read()
+    
     st.markdown(
         f"""
         <div style="width: 100%; text-align: center;">
@@ -78,7 +83,7 @@ try:
             </a>
         </div>
         <style>
-            /* Dieser kleine CSS-Trick sorgt dafür, dass das SVG sich an seinen Container anpasst */
+            /* Durch die doppelten Klammern versteht Python das CSS jetzt richtig */
             div > svg {{
                 width: 100% !important;
                 height: auto !important;
@@ -88,7 +93,6 @@ try:
         unsafe_allow_html=True
     )
 except Exception:
-    # Sicherheits-Fallback
     st.markdown('<a href="./" target="_self" style="font-weight:bold; text-align:center; display:block; text-decoration:none;">🎯 Zur Startseite</a>', unsafe_allow_html=True)
 
 # Berechnung holen
