@@ -19,6 +19,45 @@ def zeige_profil(df, rangliste, liste_aller_spieler_namen, aktueller_user, user_
         ist_eigenes_profil = (user_eingeloggt and ausgewaehlter_spieler == aktueller_user)
         st.subheader(f"Willkommen in deinem Profil, {kuerze_name(ausgewaehlter_spieler)}! 👋" if ist_eigenes_profil else f"Profil von {kuerze_name(ausgewaehlter_spieler)}")
 
+        # --- NEU: Daten aus der Spieldatenbank auslesen ---
+        spieler_profil_daten = st.session_state.spieler_dict.get(ausgewaehlter_spieler, {})
+        ist_verein = spieler_profil_daten.get("ist_vereinsspieler", False)
+        lizenz = spieler_profil_daten.get("lizenznummer", "")
+        verein_name = spieler_profil_daten.get("verein", "").strip()
+
+        # --- NEU: VISUELLE ANZEIGE DES STATUS (Öffentlich für alle sichtbar) ---
+        if ist_verein:
+            if verein_name:
+                st.success(f"🏟️ **Vereinsspieler** | Verein: **{verein_name}**")
+            else:
+                st.success("🏟️ **Vereinsspieler** (Kein Verein eingetragen)")
+        else:
+            if verein_name:
+                st.info(f"🌳 **Freizeitspieler** | Gruppe/Verein: **{verein_name}**")
+            else:
+                st.info("🌳 **Freizeitspieler**")
+
+        # --- NEU: PRIVATE EINGABE (Nur im EIGENEN Profil sichtbar) ---
+        if ist_eigenes_profil:
+            with st.expander("📝 Mein Profil bearbeiten (Verein & Lizenz)"):
+                neuer_status = st.checkbox("Ich bin aktiver Vereinsspieler", value=ist_verein)
+                neuer_verein = st.text_input("Mein Verein / Meine Boule-Gruppe:", value=verein_name).strip()
+                
+                # Die Lizenznummer wird NUR dem echten Besitzer hier im Feld angezeigt
+                neue_lizenz = st.text_input("Meine Lizenznummer (für andere unsichtbar):", value=lizenz).strip()
+                
+                if st.button("Profil-Details speichern", use_container_width=True, type="primary"):
+                    st.session_state.spieler_dict[aktueller_user]["ist_vereinsspieler"] = neuer_status
+                    st.session_state.spieler_dict[aktueller_user]["verein"] = neuer_verein
+                    st.session_state.spieler_dict[aktueller_user]["lizenznummer"] = neue_lizenz
+                    
+                    speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
+                    st.toast("✅ Profil-Details erfolgreich aktualisiert!", icon="💾")
+                    import time
+                    time.sleep(0.5)
+                    st.rerun()
+
+        # --- AB HIER FOLGT DEIN BESTEHENDER CODE UNVERÄNDERT ---
         if ist_eigenes_profil:
             with st.expander("🔑 Meinen Sicherheits-PIN ändern"):
                 neuer_pin_eingabe = st.text_input("Neuer 4-stelliger PIN (nur Zahlen):", type="password", max_chars=4, key="pwd_user_change")

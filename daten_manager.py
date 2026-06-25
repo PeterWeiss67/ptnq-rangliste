@@ -29,6 +29,16 @@ def lade_daten():
             daten = json.load(f)
             if isinstance(daten.get("spieler"), list):
                 daten["spieler"] = {s: {"pin": START_PLATZHALTER_PIN} for s in daten["spieler"]}
+            
+            # --- NEU: Bestehende Spieler um alle neuen Profilfelder erweitern ---
+            for s in daten["spieler"]:
+                if "ist_vereinsspieler" not in daten["spieler"][s]:
+                    daten["spieler"][s]["ist_vereinsspieler"] = False
+                if "lizenznummer" not in daten["spieler"][s]:
+                    daten["spieler"][s]["lizenznummer"] = ""
+                if "verein" not in daten["spieler"][s]:
+                    daten["spieler"][s]["verein"] = ""
+                    
             if "warteschlange" not in daten:
                 daten["warteschlange"] = []
             return daten
