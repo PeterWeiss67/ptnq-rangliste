@@ -67,17 +67,17 @@ try:
     with open("ptnq_logo.svg", "r", encoding="utf-8") as f:
         svg_inhalt = f.read()
     
-    # 1. Das Logo als klickbarer Link
+    # Wir geben dem Logo-Container eine eindeutige ID ('mein-verein-logo')
     st.markdown(
-        f'<div style="width: 100%; text-align: center;"><a href="./" target="_self" style="display: block; width: 100%; text-decoration: none;"><div style="width: 100%; max-width: 100%; height: auto;">{svg_inhalt}</div></a></div>',
+        f'<div id="mein-verein-logo" style="width: 100%; text-align: center;"><a href="./" target="_self" style="display: block; width: 100%; text-decoration: none;"><div style="width: 100%; max-width: 100%; height: auto;">{svg_inhalt}</div></a></div>',
         unsafe_allow_html=True
     )
     
-    # 2. Das CSS zur Skalierung separat (dadurch gibt es KEINE Probleme mit Klammern)
+    # Das CSS spricht jetzt NUR NOCH Elemente innerhalb von '#mein-verein-logo' an!
     st.html(
         """
         <style>
-            div > svg {
+            #mein-verein-logo > a > div > svg {
                 width: 100% !important;
                 height: auto !important;
             }
