@@ -62,13 +62,7 @@ with st.sidebar:
     st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
     st.caption("PTNQ™ ist eine eingetragene Marke.")
 
-# --- Logo als Text einlesen, skalieren und ohne HTML-Fehler anzeigen ---
-try:
-    with open("ptnq_logo.svg", "r", encoding="utf-8") as f:
-        svg_inhalt = f.read()
-    
-    # Wir umschließen das SVG mit einem Skalierungs-Container und dem Link
-   # --- JETZT ABER: F-String-Klammern für CSS maskiert ---
+# --- LOGO ALS LINK (Vollständig repariert und sauber eingerückt) ---
 try:
     with open("ptnq_logo.svg", "r", encoding="utf-8") as f:
         svg_inhalt = f.read()
