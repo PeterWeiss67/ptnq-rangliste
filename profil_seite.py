@@ -116,13 +116,13 @@ def zeige_profil(df, rangliste, liste_aller_spieler_namen, aktueller_user, user_
             st.markdown("**👥 Häufigste Mitspieler:**")
             if partner_liste:
                 df_p = pd.DataFrame(partner_liste).groupby("Name").agg(Spiele=("Sieg", "count"), Siege=("Sieg", "sum")).reset_index().sort_values(by="Spiele", ascending=False).head(3)
-                for _, row in df_p.iterrows(): st.write(f"• {kuerze_name(row['Name'])} ({row['Spiele']}x, {row['Siege']} W)")
+                for _, row in df_p.iterrows(): st.write(f"• {kuerze_name(row['Name'])} ({row['Spiele']}x, {row['Siege']} gew.)")
             else: st.caption("Noch keine Team-Matches.")
         with c2:
             st.markdown("**⚔️ Häufigste Gegner:**")
             if gegner_liste:
                 df_g = pd.DataFrame(gegner_liste).groupby("Name").agg(Spiele=("Niederlage", "count"), Niederlagen=("Niederlage", "sum")).reset_index().sort_values(by="Spiele", ascending=False).head(3)
-                for _, row in df_g.iterrows(): st.write(f"• {kuerze_name(row['Name'])} ({row['Spiele']}x, {row['Niederlagen']} L)")
+                for _, row in df_g.iterrows(): st.write(f"• {kuerze_name(row['Name'])} ({row['Spiele']}x, {row['Niederlagen']} verl.)")
             else: st.caption("Noch keine Gegner.")
 
         st.divider()
