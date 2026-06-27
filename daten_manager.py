@@ -82,9 +82,18 @@ def berechne_rangliste(spiele_historie, spieler_namen):
                 rangliste[s]["Form"].append("✅" if ergebnis_b == 1.0 else "❌")
 
     df = pd.DataFrame.from_dict(rangliste, orient='index')
+    
+    # 🛑 NEU: Fehler abfangen, wenn noch gar keine Spieler existieren
+    if df.empty:
+        # Wir bauen einfach eine leere Hülle mit den richtigen Spaltennamen
+        df = pd.DataFrame(columns=["Platz", "Spieler", "VollerName", "Elo", "Spiele", "Siege", "Niederlagen", "Differenz", "Form"])
+        return df, rangliste
+
+    # Wenn Spieler da sind, ganz normal berechnen:
     df["Elo"] = df["Elo"].round(1)
     df = df.sort_values(by=["Elo", "Differenz"], ascending=[False, False]).reset_index()
     df.rename(columns={"index": "VollerName"}, inplace=True)
     df["Spieler"] = df["VollerName"].apply(kuerze_name)
     df.insert(0, "Platz", range(1, len(df) + 1))
+    
     return df, rangliste
