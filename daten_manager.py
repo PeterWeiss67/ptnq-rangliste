@@ -8,8 +8,11 @@ else:
     # Standard-Fallback, Steuerung erfolgt dynamisch
     DATEI_PFAD = "petanque_daten_PROD.json" 
 
-ADMIN_PASSWORT = "petanque2026"
-MASTER_PIN = "1967"  # 👈 Deine geheim gehaltene Master-Zahl
+import streamlit as st
+
+# Statt fester Texte holen wir die Daten jetzt sicher aus den Secrets:
+ADMIN_PASSWORT = st.secrets["ADMIN_PASSWORT"]
+MASTER_PIN = st.secrets["MASTER_PIN"]
 START_PLATZHALTER_PIN = "PROFIL_SPERRE_INIT_2026"
 K_FAKTOR = 24
 
