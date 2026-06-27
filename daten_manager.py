@@ -8,8 +8,11 @@ else:
     # Standard-Fallback, Steuerung erfolgt dynamisch
     DATEI_PFAD = "petanque_daten_PROD.json" 
 
-ADMIN_PASSWORT = "petanque2026"
-MASTER_PIN = "1967"  # 👈 Deine geheim gehaltene Master-Zahl
+import streamlit as st
+
+# Statt fester Texte holen wir die Daten jetzt sicher aus den Secrets:
+ADMIN_PASSWORT = st.secrets["ADMIN_PASSWORT"]
+MASTER_PIN = st.secrets["MASTER_PIN"]
 START_PLATZHALTER_PIN = "PROFIL_SPERRE_INIT_2026"
 K_FAKTOR = 24
 
@@ -82,9 +85,18 @@ def berechne_rangliste(spiele_historie, spieler_namen):
                 rangliste[s]["Form"].append("✅" if ergebnis_b == 1.0 else "❌")
 
     df = pd.DataFrame.from_dict(rangliste, orient='index')
+    
+    # 🛑 NEU: Fehler abfangen, wenn noch gar keine Spieler existieren
+    if df.empty:
+        # Wir bauen einfach eine leere Hülle mit den richtigen Spaltennamen
+        df = pd.DataFrame(columns=["Platz", "Spieler", "VollerName", "Elo", "Spiele", "Siege", "Niederlagen", "Differenz", "Form"])
+        return df, rangliste
+
+    # Wenn Spieler da sind, ganz normal berechnen:
     df["Elo"] = df["Elo"].round(1)
     df = df.sort_values(by=["Elo", "Differenz"], ascending=[False, False]).reset_index()
     df.rename(columns={"index": "VollerName"}, inplace=True)
     df["Spieler"] = df["VollerName"].apply(kuerze_name)
     df.insert(0, "Platz", range(1, len(df) + 1))
+    
     return df, rangliste
