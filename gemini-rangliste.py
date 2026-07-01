@@ -75,9 +75,9 @@ st.download_button(
     mime="application/json"
 )
 
-    st.divider()
-    st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
-    st.caption("PTNQ™ ist eine eingetragene Marke.")
+st.divider()
+st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
+st.caption("PTNQ™ ist eine eingetragene Marke.")
 
 # --- LOGO ALS LINK (Vollständig repariert und sauber eingerückt) ---
 try:
