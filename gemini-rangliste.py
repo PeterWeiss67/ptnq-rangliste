@@ -4,6 +4,15 @@ import daten_manager as dm
 import profil_seite as ps
 import spiel_seite as ss
 
+# Nur zum Testen – zeigt an, welche Schlüssel Streamlit überhaupt sieht:
+if "SUPABASE_URL" not in st.secrets:
+    st.error("❌ Die Variable SUPABASE_URL wurde in den Streamlit-Secrets NICHT gefunden!")
+else:
+    st.success("✅ SUPABASE_URL ist in den Secrets vorhanden.")
+
+if "SUPABASE_KEY" not in st.secrets:
+    st.error("❌ Die Variable SUPABASE_KEY wurde in den Streamlit-Secrets NICHT gefunden!")
+
 st.set_page_config(page_title="Petanque Elo-Rangliste", page_icon="🏆")
 
 # Dynamischen Pfad setzen
