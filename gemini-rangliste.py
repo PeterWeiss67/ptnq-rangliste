@@ -58,6 +58,23 @@ with st.sidebar:
             dm.speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
             st.rerun()
 
+# Dieser Code kommt in deinen Admin-Bereich (unter die Passwort-Abfrage)
+st.subheader("📦 Daten-Backup für Supabase")
+
+# Wir laden deine echten Daten über deinen bisherigen Datenmanager
+aktuelle_daten = dm.lade_daten()  # Ersetze das falls dein Befehl anders heißt
+
+# JSON-Daten in Text umwandeln
+json_string = json.dumps(aktuelle_daten, indent=4, ensure_ascii=False)
+
+# Einen Download-Button für dich erstellen
+st.download_button(
+    label="📥 Aktuelle ptnq_daten_PROD.json herunterladen",
+    data=json_string,
+    file_name="petanque_daten_PROD.json",
+    mime="application/json"
+)
+
     st.divider()
     st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
     st.caption("PTNQ™ ist eine eingetragene Marke.")
