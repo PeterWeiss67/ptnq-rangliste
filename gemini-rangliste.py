@@ -59,6 +59,10 @@ with st.sidebar:
             dm.speichere_daten({"spieler": st.session_state.spieler_dict, "spiele_historie": st.session_state.spiele_historie, "warteschlange": st.session_state.warteschlange})
             st.rerun()
 
+    st.divider()
+    st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
+    st.caption("PTNQ™ ist eine eingetragene Marke.")
+
 # # Dieser Code kommt in deinen Admin-Bereich (unter die Passwort-Abfrage)
 # st.subheader("📦 Daten-Backup für Supabase")
 
@@ -75,10 +79,6 @@ with st.sidebar:
 #     file_name="petanque_daten_PROD.json",
 #     mime="application/json"
 # )
-
-            st.divider()
-            st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
-            st.caption("PTNQ™ ist eine eingetragene Marke.")
 
 # --- LOGO ALS LINK (Vollständig repariert und sauber eingerückt) ---
 try:
