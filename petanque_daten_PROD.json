@@ -1,0 +1,872 @@
+{
+    "spieler": {
+        "Andreas": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Anita Maiwald": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Antje Bartels": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Burkhard Wülbeck": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Christiane Ginty": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Daniel Kruse": {
+            "pin": "4674",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Detlef Schäfer": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Dieter K": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Dieter Rohse": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Dieter Schoofs": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Elke Endemann": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Fred": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Guido": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Hardy": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Heike Linden": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Heiner Dresenkamp": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Helmut Giesemann": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Horst Osterheld": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Imke Rohse": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Jochen Essl": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Jürgen Geimer": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Lutz Raulin": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Norbert Becker": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Peter Weiss": {
+            "pin": "3011",
+            "ist_vereinsspieler": true,
+            "lizenznummer": "",
+            "verein": "TC69 Sterkrade"
+        },
+        "Rainer Bass": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Ralf Fellisch": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Stephan Pappert": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Sylvia Ester-Hülsmann": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Torsten Altrock": {
+            "pin": "6711",
+            "ist_vereinsspieler": true,
+            "lizenznummer": "",
+            "verein": "TC69 Sterkrade"
+        },
+        "Ulrike Schäfer": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Willi Hansen": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Zbigniew Glowacki": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Egon": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Sigrid Bass": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Ilonka": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Detlef R": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Gökhan Tezcan": {
+            "pin": "2303",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Nikola Besevic": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Claudio Bruno": {
+            "pin": "PROFIL_SPERRE_INIT_2026",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Arndt Barkowsky": {
+            "pin": "1102",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        },
+        "Heike Barkowsky": {
+            "pin": "1102",
+            "ist_vereinsspieler": false,
+            "lizenznummer": "",
+            "verein": ""
+        }
+    },
+    "spiele_historie": [
+        {
+            "Zeitstempel": "24.06.2026 08:38",
+            "Spieltyp": "🏟️ Verein / Training",
+            "Team A": [
+                "Antje Bartels",
+                "Andreas"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Heiner Dresenkamp",
+                "Hardy"
+            ],
+            "Punkte B": 2,
+            "EingetragenVon": "Antje Bartels"
+        },
+        {
+            "Zeitstempel": "24.06.2026 08:54",
+            "Spieltyp": "🏟️ Verein / Training",
+            "Team A": [
+                "Andreas",
+                "Sylvia Ester-Hülsmann",
+                "Dieter K"
+            ],
+            "Punkte A": 11,
+            "Team B": [
+                "Helmut Giesemann",
+                "Fred",
+                "Hardy"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Andreas"
+        },
+        {
+            "Zeitstempel": "24.06.2026 09:00",
+            "Spieltyp": "🏟️ Verein / Training",
+            "Team A": [
+                "Helmut Giesemann",
+                "Dieter K"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Stephan Pappert",
+                "Zbigniew Glowacki"
+            ],
+            "Punkte B": 6,
+            "EingetragenVon": "Helmut Giesemann"
+        },
+        {
+            "Zeitstempel": "24.06.2026 09:09",
+            "Spieltyp": "🏟️ Verein / Training",
+            "Team A": [
+                "Fred",
+                "Christiane Ginty"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Burkhard Wülbeck",
+                "Guido"
+            ],
+            "Punkte B": 3,
+            "EingetragenVon": "Fred"
+        },
+        {
+            "Zeitstempel": "24.06.2026 18:54",
+            "Team A": [
+                "Daniel Kruse",
+                "Imke Rohse"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Heike Linden",
+                "Dieter Rohse"
+            ],
+            "Punkte B": 8,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 18:58",
+            "Team A": [
+                "Heike Linden",
+                "Sigrid Bass"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Heiner Dresenkamp",
+                "Egon"
+            ],
+            "Punkte B": 5,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:00",
+            "Team A": [
+                "Dieter Rohse",
+                "Norbert Becker",
+                "Imke Rohse"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Zbigniew Glowacki",
+                "Lutz Raulin",
+                "Guido"
+            ],
+            "Punkte B": 10,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:03",
+            "Team A": [
+                "Dieter K",
+                "Zbigniew Glowacki"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Norbert Becker",
+                "Rainer Bass"
+            ],
+            "Punkte B": 9,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:06",
+            "Team A": [
+                "Sigrid Bass",
+                "Torsten Altrock",
+                "Lutz Raulin"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Sylvia Ester-Hülsmann",
+                "Detlef R"
+            ],
+            "Punkte B": 0,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:07",
+            "Team A": [
+                "Sigrid Bass",
+                "Torsten Altrock",
+                "Lutz Raulin"
+            ],
+            "Punkte A": 2,
+            "Team B": [
+                "Sylvia Ester-Hülsmann",
+                "Detlef R"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:10",
+            "Team A": [
+                "Daniel Kruse",
+                "Ilonka"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Christiane Ginty",
+                "Stephan Pappert"
+            ],
+            "Punkte B": 0,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:10",
+            "Team A": [
+                "Daniel Kruse",
+                "Ilonka"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Christiane Ginty",
+                "Stephan Pappert"
+            ],
+            "Punkte B": 7,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:11",
+            "Team A": [
+                "Burkhard Wülbeck",
+                "Christiane Ginty",
+                "Helmut Giesemann"
+            ],
+            "Punkte A": 12,
+            "Team B": [
+                "Peter Weiss",
+                "Ralf Fellisch"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "24.06.2026 19:14",
+            "Team A": [
+                "Zbigniew Glowacki",
+                "Imke Rohse",
+                "Daniel Kruse"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Detlef R",
+                "Heiner Dresenkamp",
+                "Sylvia Ester-Hülsmann"
+            ],
+            "Punkte B": 12,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "26.06.2026 19:00",
+            "Team A": [
+                "Daniel Kruse",
+                "Gökhan Tezcan",
+                "Nikola Besevic"
+            ],
+            "Punkte A": 12,
+            "Team B": [
+                "Claudio Bruno",
+                "Peter Weiss",
+                "Ralf Fellisch"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "26.06.2026 18:58",
+            "Team A": [
+                "Daniel Kruse",
+                "Ralf Fellisch",
+                "Nikola Besevic"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Claudio Bruno",
+                "Peter Weiss",
+                "Gökhan Tezcan"
+            ],
+            "Punkte B": 6,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "26.06.2026 20:12",
+            "Team A": [
+                "Gökhan Tezcan",
+                "Daniel Kruse"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Peter Weiss",
+                "Ralf Fellisch"
+            ],
+            "Punkte B": 7,
+            "EingetragenVon": "Gökhan Tezcan"
+        },
+        {
+            "Zeitstempel": "27.06.2026 14:45",
+            "Team A": [
+                "Anita Maiwald",
+                "Norbert Becker"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Heiner Dresenkamp",
+                "Burkhard Wülbeck"
+            ],
+            "Punkte B": 10,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "27.06.2026 14:46",
+            "Team A": [
+                "Elke Endemann",
+                "Imke Rohse",
+                "Jochen Essl"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Dieter Rohse",
+                "Ralf Fellisch"
+            ],
+            "Punkte B": 10,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "27.06.2026 14:47",
+            "Team A": [
+                "Heiner Dresenkamp",
+                "Elke Endemann"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Burkhard Wülbeck",
+                "Norbert Becker"
+            ],
+            "Punkte B": 10,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "27.06.2026 14:49",
+            "Team A": [
+                "Zbigniew Glowacki",
+                "Sylvia Ester-Hülsmann",
+                "Helmut Giesemann"
+            ],
+            "Punkte A": 9,
+            "Team B": [
+                "Detlef R",
+                "Heike Linden",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "27.06.2026 14:49",
+            "Team A": [
+                "Zbigniew Glowacki",
+                "Sylvia Ester-Hülsmann",
+                "Helmut Giesemann"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Detlef R",
+                "Heike Linden",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 10,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "28.06.2026 16:02",
+            "Team A": [
+                "Heike Barkowsky",
+                "Arndt Barkowsky",
+                "Claudio Bruno"
+            ],
+            "Punkte A": 3,
+            "Team B": [
+                "Daniel Kruse",
+                "Peter Weiss",
+                "Nikola Besevic"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Heike Barkowsky"
+        },
+        {
+            "Zeitstempel": "28.06.2026 16:58",
+            "Team A": [
+                "Heike Barkowsky",
+                "Nikola Besevic",
+                "Daniel Kruse"
+            ],
+            "Punkte A": 10,
+            "Team B": [
+                "Arndt Barkowsky",
+                "Claudio Bruno",
+                "Peter Weiss"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Heike Barkowsky"
+        },
+        {
+            "Zeitstempel": "28.06.2026 17:53",
+            "Team A": [
+                "Heike Barkowsky",
+                "Daniel Kruse"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Arndt Barkowsky",
+                "Nikola Besevic",
+                "Peter Weiss"
+            ],
+            "Punkte B": 11,
+            "EingetragenVon": "Heike Barkowsky"
+        },
+        {
+            "Zeitstempel": "30.06.2026 01:09",
+            "Team A": [
+                "Imke Rohse",
+                "Zbigniew Glowacki"
+            ],
+            "Punkte A": 3,
+            "Team B": [
+                "Dieter Rohse",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 01:10",
+            "Team A": [
+                "Imke Rohse",
+                "Zbigniew Glowacki"
+            ],
+            "Punkte A": 10,
+            "Team B": [
+                "Dieter Rohse",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 01:11",
+            "Team A": [
+                "Stephan Pappert",
+                "Heiner Dresenkamp"
+            ],
+            "Punkte A": 0,
+            "Team B": [
+                "Burkhard Wülbeck",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 01:12",
+            "Team A": [
+                "Ralf Fellisch",
+                "Helmut Giesemann"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Peter Weiss",
+                "Sylvia Ester-Hülsmann"
+            ],
+            "Punkte B": 3,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 01:14",
+            "Team A": [
+                "Sylvia Ester-Hülsmann",
+                "Dieter Rohse"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Zbigniew Glowacki",
+                "Imke Rohse"
+            ],
+            "Punkte B": 4,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:20",
+            "Team A": [
+                "Hardy",
+                "Dieter Rohse"
+            ],
+            "Punkte A": 12,
+            "Team B": [
+                "Stephan Pappert",
+                "Antje Bartels"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:22",
+            "Team A": [
+                "Zbigniew Glowacki",
+                "Detlef R"
+            ],
+            "Punkte A": 5,
+            "Team B": [
+                "Norbert Becker",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:24",
+            "Team A": [
+                "Sylvia Ester-Hülsmann",
+                "Fred"
+            ],
+            "Punkte A": 6,
+            "Team B": [
+                "Heike Linden",
+                "Imke Rohse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:27",
+            "Team A": [
+                "Helmut Giesemann",
+                "Heiner Dresenkamp"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Willi Hansen",
+                "Burkhard Wülbeck"
+            ],
+            "Punkte B": 11,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:30",
+            "Team A": [
+                "Hardy",
+                "Antje Bartels",
+                "Dieter Rohse"
+            ],
+            "Punkte A": 5,
+            "Team B": [
+                "Jochen Essl",
+                "Anita Maiwald",
+                "Stephan Pappert"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:32",
+            "Team A": [
+                "Zbigniew Glowacki",
+                "Fred"
+            ],
+            "Punkte A": 4,
+            "Team B": [
+                "Detlef R",
+                "Peter Weiss"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:33",
+            "Team A": [
+                "Heike Linden",
+                "Horst Osterheld"
+            ],
+            "Punkte A": 6,
+            "Team B": [
+                "Imke Rohse",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:35",
+            "Team A": [
+                "Sylvia Ester-Hülsmann",
+                "Torsten Altrock"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Rainer Bass",
+                "Norbert Becker"
+            ],
+            "Punkte B": 6,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:36",
+            "Team A": [
+                "Imke Rohse",
+                "Torsten Altrock"
+            ],
+            "Punkte A": 8,
+            "Team B": [
+                "Peter Weiss",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:38",
+            "Team A": [
+                "Jochen Essl",
+                "Willi Hansen",
+                "Horst Osterheld"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Sylvia Ester-Hülsmann",
+                "Detlef R",
+                "Helmut Giesemann"
+            ],
+            "Punkte B": 9,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:46",
+            "Team A": [
+                "Torsten Altrock",
+                "Peter Weiss"
+            ],
+            "Punkte A": 12,
+            "Team B": [
+                "Imke Rohse",
+                "Daniel Kruse"
+            ],
+            "Punkte B": 13,
+            "EingetragenVon": "Admin"
+        },
+        {
+            "Zeitstempel": "30.06.2026 18:48",
+            "Team A": [
+                "Ralf Fellisch",
+                "Detlef R"
+            ],
+            "Punkte A": 13,
+            "Team B": [
+                "Sylvia Ester-Hülsmann",
+                "Helmut Giesemann"
+            ],
+            "Punkte B": 6,
+            "EingetragenVon": "Admin"
+        }
+    ],
+    "warteschlange": []
+}
