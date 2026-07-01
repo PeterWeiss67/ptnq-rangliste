@@ -72,14 +72,14 @@ with st.sidebar:
     st.caption("© 2026 PTNQ. Alle Rechte vorbehalten.")
     st.caption("PTNQ™ ist eine eingetragene Marke.")
 
-# Nur für dich als Admin sichtbar zum einmaligen Befüllen der leeren Supabase DB
-if st.button("🚀 Einmalig Daten zu Supabase hochladen"):
-    with open("petanque_daten_PROD.json", "r", encoding="utf-8") as f:
-        lokale_daten = json.load(f)
+# # Nur für dich als Admin sichtbar zum einmaligen Befüllen der leeren Supabase DB
+# if st.button("🚀 Einmalig Daten zu Supabase hochladen"):
+#     with open("petanque_daten_PROD.json", "r", encoding="utf-8") as f:
+#         lokale_daten = json.load(f)
     
-    # Wir rufen unsere neue speichere_daten() auf, die alles hochlädt!
-    dm.speichere_daten(lokale_daten)
-    st.success("Die echten Daten wurden erfolgreich migriert!")
+#     # Wir rufen unsere neue speichere_daten() auf, die alles hochlädt!
+#     dm.speichere_daten(lokale_daten)
+#     st.success("Die echten Daten wurden erfolgreich migriert!")
     
 # # Dieser Code kommt in deinen Admin-Bereich (unter die Passwort-Abfrage)
 # st.subheader("📦 Daten-Backup für Supabase")
